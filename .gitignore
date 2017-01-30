@@ -1,0 +1,10 @@
+/.bundle
+/vendor/bundle/
+/vendor/ruby/
+
+/public/cache
+/public/stylesheets/compiled
+/public/system/*
+
+.DS_Store
+Gemfile.lock
