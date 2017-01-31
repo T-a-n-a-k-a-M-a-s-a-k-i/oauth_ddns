@@ -9,5 +9,7 @@ class Provider < Sequel::Model
     end
 
     create_table
+
+    self.insert(:provider => "twitter")
   end
 end

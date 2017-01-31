@@ -9,5 +9,9 @@ class RecordType < Sequel::Model
     end
 
     create_table
+
+    ["ipv4_address", "ipv6_address", "txt"].each do |record_type|
+      self.insert(:record_type => record_type)
+    end
   end
 end

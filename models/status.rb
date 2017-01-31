@@ -8,6 +8,7 @@ class Status < Sequel::Model
       foreign_key :provider, :key=>:provider, :table=>:providers, :on_delete=>:cascade, :type=>String
       foreign_key :record_type, :key=>:record_type, :table=>:record_types, :on_delete=>:cascade, :type=>String
       String :user_id
+      String :record
 
       primary_key([:provider, :record_type, :user_id])
     end
