@@ -11,16 +11,16 @@ class WebService < Sinatra::Base
 
   end
 
-  put "/api/status" do
-
-  end
-
   get "/status" do
     haml :status
   end
 
   get "/auth/:provider/callback" do
     auth_result = request.env["omniauth.auth"]
+  end
+
+  put "/api/status" do
+
   end
 
   get "/" do

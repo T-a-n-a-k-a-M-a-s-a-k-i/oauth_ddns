@@ -8,43 +8,13 @@
         %th
           IPv4 Address
         %th
-          IPv6 Address
-        %th
           TXT
     %tbody
       %td
         #{@status.ipv4_address}
-      %td
-        #{@status.ipv6_address}
       %td
         #{@status.txt}
   %a.btn.btn-primary{:href => "#", :'data-toggle' => "modal", :'data-target' => "#updateModal"}
     Update
   %a.btn.btn-warning{:href => "#", :'data-toggle' => "modal", :'data-target' => "#clearModal"}
     Clear
-
-%div#updateModal.modal.fade
-  %div.modal-dialog
-    %div.modal-content
-      %div.modal-header
-        %a.close{:'data-dismiss' => "modal"}
-          x
-        %h3
-          Update Status
-      %div.modal-body.text-center
-        %div.form-group
-          %label{:for => "ipv4_address"}
-            IPv4 Address
-          %input#ipv4_address{:type => "text", :name => "ipv4_address", :placeholder => "#{@request_ip}"}
-        %div.form-group
-          %label{:for => "ipv6_address"}
-            IPv6 Address
-          %input#ipv6_address{:type => "text", :name => "ipv6_address"}
-        %div.form-group
-          %label{:for => "txt"}
-            TXT 
-          %input#txt{:type => "text", :name => "txt"}
-      %div.modal-footer
-        %input.btn.btn-primary{:type => "submit", :value => "Submit"}
-        %button.btn{:'data-dismiss' => "modal"}
-          Close
