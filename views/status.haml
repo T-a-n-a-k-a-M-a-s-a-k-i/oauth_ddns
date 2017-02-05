@@ -1,20 +1,26 @@
-%h1 Status
+%h1
+  Status
 %div.container
-  %table.table.table-bordered.table-striped
-    %thead
-      %tr
-        %th
-          Domain Name
-        %th
-          IPv4 Address
-        %th
-          TXT
-    %tbody
-      %td
-        #{@status.ipv4_address}
-      %td
-        #{@status.txt}
-  %a.btn.btn-primary{:href => "#", :'data-toggle' => "modal", :'data-target' => "#updateModal"}
-    Update
-  %a.btn.btn-warning{:href => "#", :'data-toggle' => "modal", :'data-target' => "#clearModal"}
-    Clear
+  %form{:action => '/status', :method => 'post'}
+    %input{:type => "hidden", :name => "_method", :value => "PUT"}
+    %table.table.table-bordered.table-striped
+      %thead
+        %tr
+          %th
+            Domain Name
+          %th
+            IPv4 Address
+          %th
+            TXT
+      %tbody
+        %td
+          #{@status.donamin_name}
+        %td
+          #{@status.ipv4_address} => #{@request.ip}
+        %td
+          #{@status.txt} =>
+          %input{:type => "text", :name => "txt", :value => "#{@status.txt}"}
+    %input.btn.btn-primary{:type => "submit", :value => "Update"}
+    %form{:action => "/status", :method => "post"}
+      %input{:type => "hidden", :name => "_method", :value => "DELETE"}
+      %input.btn.btn-warning{:type => "submit", :value => "Clear"}
