@@ -13,26 +13,36 @@ class WebService < Sinatra::Base
       @provider = provider
     end
 
-    def update_status(params)
-      ipv4_status = get_status("ipv4_address")
-      ipv4_status ||= Status.new(
+    def create_new_status(record_type)
+      status = Status.new(
         :user_id => @user_id,
         :provider => @provider,
-        :record_type => "ipv4_address"
+        :record_type => record_type
       )
+    end
+
+    def update_status(params)
+      ipv4_status = get_status("ipv4_address")
+      ipv4_status ||= create_new_status("ipv4_address")
       ipv4_status.set(:record => params["ipv4_address"])
 
       txt_status = get_status("txt")
-      txt_status ||= Status.new(
-        :user_id => @user_id,
-        :provider => @provider,
-        :record_type => "txt"
-      )
+      txt_status ||= create_new_status("txt")
       txt_status.set(:record => params["txt"])
 
       DB.transaction do
         ipv4_status.save_changes(:raise_on_failure => true)
         txt_status.save_changes(:raise_on_failure => true)
+      end
+    end
+
+    def delete_status
+      ipv4_status = get_status("ipv4_address")
+      txt_status = get_status("txt")
+
+      DB.transaction do
+        ipv4_status.delete if ipv4_status
+        txt_status.delete if txt_status
       end
     end
 
@@ -77,12 +87,16 @@ class WebService < Sinatra::Base
   get "/status" do
     @request_ip = request.ip
     @domain_name = "#{@user_id}.#{@provider}.#{settings.ddns_domain}"
-    @ipv4_address, @txt = get_status()
+    @ipv4_address = get_ipv4_address()
+    @txt = get_txt()
 
     haml :status
   end
 
   delete "/status" do
+    delete_status()
+    session[:uid] = nil
+
     haml :status
   end
 
