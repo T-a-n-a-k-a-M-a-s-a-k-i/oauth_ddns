@@ -3,6 +3,8 @@ class WebService < Sinatra::Base
   config_file "config.yml"
 
   configure do
+    set :session_secret, settings.session_secret
+    set :layout_engine => :haml
     enable :method_override
     enable :sessions
   end
