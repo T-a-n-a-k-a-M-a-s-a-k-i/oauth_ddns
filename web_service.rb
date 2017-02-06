@@ -1,4 +1,7 @@
 class WebService < Sinatra::Base
+  register Sinatra::ConfigFile
+  config_file "config.yml"
+
   configure do
     set :sessions, true
     enable :method_override
@@ -6,13 +9,17 @@ class WebService < Sinatra::Base
 
   helpers do
     def set_status(osn_identifier)
-      @ipv4_status = Status.filter(
+      ipv4_status = Status.filter(
         osn_identifier.merge(:record_type => "ipv4_address")
       ).first
+      @ipv4_address = ipv4_status.nil? ? "0.0.0.0" : ipv4_status.record
 
-      @txt_status = Status.filter(
+      txt_status = Status.filter(
         osn_identifier.merge(:record_type => "txt")
       ).first
+      @txt = txt_status.nil? ? "" : txt_status.record
+
+      @domain_name = "#{osn_identifier[:user_id]}.#{osn_identifier[:provider]}.#{settings.ddns_domain}"
     end
   end
 
@@ -25,9 +32,7 @@ class WebService < Sinatra::Base
   end
 
   get "/status" do
-    @request = request
-    @ipv4_status
-    @txt_status
+    @request_ip = request.ip
 
     haml :status
   end
@@ -39,7 +44,7 @@ class WebService < Sinatra::Base
   get "/auth/:provider/callback" do
     omniauth_result = request.env["omniauth.auth"]
     set_status(
-      :provide => omniauth_result["provider"],
+      :provider => omniauth_result["provider"],
       :user_id => omniauth_result["info"]["nickname"]
     )
   end

@@ -14,12 +14,12 @@
             TXT
       %tbody
         %td
-          #{@status.donamin_name}
+          #{@donamin_name}
         %td
-          #{@status.ipv4_address} => #{@request.ip}
+          #{@ipv4_address} => #{@request_ip}
         %td
-          #{@status.txt} =>
-          %input{:type => "text", :name => "txt", :value => "#{@status.txt}"}
+          #{@txt} =>
+          %input{:type => "text", :name => "txt", :value => "#{@txt}"}
     %input.btn.btn-primary{:type => "submit", :value => "Update"}
     %form{:action => "/status", :method => "post"}
       %input{:type => "hidden", :name => "_method", :value => "DELETE"}
