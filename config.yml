@@ -1,1 +1,2 @@
 ddns_domain: example
+session_secret: secret
