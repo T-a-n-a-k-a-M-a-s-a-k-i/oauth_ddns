@@ -1,6 +1,6 @@
-%h1
-  Status
 %div.container
+  %h1
+    Status
   %form{:action => '/status', :method => 'post'}
     %input{:type => "hidden", :name => "_method", :value => "PUT"}
     %table.table.table-bordered.table-striped
@@ -14,7 +14,7 @@
             TXT
       %tbody
         %td
-          #{@donamin_name}
+          #{@domain_name}
         %td
           #{@ipv4_address} => #{@request_ip}
         %td

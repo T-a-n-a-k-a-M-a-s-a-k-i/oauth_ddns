@@ -61,7 +61,7 @@ class WebService < Sinatra::Base
     end
 
     def get_txt
-      txt = get_status("txt").nil? ? "" : txt_status.record
+      txt = get_status("txt").nil? ? "(none)" : txt_status.record
     end
 
     def authenticated?
