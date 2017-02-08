@@ -23,6 +23,6 @@
           #{@txt} =>
           %input{:type => "text", :name => "txt", :value => "#{@txt}"}
     %input.btn.btn-primary{:type => "submit", :value => "Update"}
-    %form{:action => "/status", :method => "post"}
-      %input{:type => "hidden", :name => "_method", :value => "DELETE"}
-      %input.btn.btn-warning{:type => "submit", :value => "Clear"}
+  %form{:action => "/status", :method => "post"}
+    %input{:type => "hidden", :name => "_method", :value => "DELETE"}
+    %input.btn.btn-warning{:type => "submit", :value => "Clear"}

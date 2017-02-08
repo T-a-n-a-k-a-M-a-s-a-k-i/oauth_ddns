@@ -5,6 +5,7 @@ class WebService < Sinatra::Base
   configure do
     set :session_secret, settings.session_secret
     set :layout_engine => :haml
+    set :bind => "0.0.0.0"
     enable :method_override
     enable :sessions
   end
@@ -48,7 +49,10 @@ class WebService < Sinatra::Base
   end
   
   put "/status" do
-    Status.update_status(params.merge("ipv4_address" => request.ip))
+    Status.update_status(params.merge(
+      "uid" => session[:uid]
+      "ipv4_address" => request.ip,
+    ))
 
     redirect to("/status")
   end
@@ -68,14 +72,14 @@ class WebService < Sinatra::Base
   delete "/status" do
     Status.delete_status(session[:uid])
 
-    haml :status
+    redirect to("/status")
   end
 
   get "/auth/:provider/callback" do
     omniauth_result = request.env["omniauth.auth"]
     session[:uid] = omniauth_result["uid"]
 
-    UserAccount.create(
+    UserAccount.find_or_create(
       :uid => session[:uid],
       :provider => omniauth_result["provider"],
       :nickname => omniauth_result["info"]["nickname"]
