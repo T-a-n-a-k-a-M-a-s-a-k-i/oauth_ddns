@@ -10,58 +10,25 @@ class WebService < Sinatra::Base
   end
 
   helpers do
-    def set_osn_identifier(user_id, provider)
-      @user_id = user_id
-      @provider = provider
-    end
-
-    def create_new_status(record_type)
-      status = Status.new(
-        :user_id => @user_id,
-        :provider => @provider,
-        :record_type => record_type
-      )
-    end
-
-    def update_status(params)
-      ipv4_status = get_status("ipv4_address")
-      ipv4_status ||= create_new_status("ipv4_address")
-      ipv4_status.set(:record => params["ipv4_address"])
-
-      txt_status = get_status("txt")
-      txt_status ||= create_new_status("txt")
-      txt_status.set(:record => params["txt"])
-
-      DB.transaction do
-        ipv4_status.save_changes(:raise_on_failure => true)
-        txt_status.save_changes(:raise_on_failure => true)
-      end
-    end
-
-    def delete_status
-      ipv4_status = get_status("ipv4_address")
-      txt_status = get_status("txt")
-
-      DB.transaction do
-        ipv4_status.delete if ipv4_status
-        txt_status.delete if txt_status
-      end
-    end
-
-    def get_status(record_type)
-      status = Status.filter(
-        :user_id => @user_id,
-        :provider => @provider,
-        :record_type => record_type
-      ).first
-    end
-
     def get_ipv4_address
-      ipv4_address = get_status("ipv4_address").nil? ? "0.0.0.0" : ipv4_status.record
+      ipv4_address = Status.find(
+        :uid => session[:uid],
+        :record_type => "ipv4_address"
+      ).nil? ? "0.0.0.0" : ipv4_status.record
     end
 
     def get_txt
-      txt = get_status("txt").nil? ? "" : txt_status.record
+      txt = Status.find(
+        :uid => session[:uid],
+        :record_type => "txt"
+      ).nil? ? "" : txt_status.record
+    end
+
+    def get_dns_vital
+      vital = Status.find(
+        :uid => session[:uid],
+        :record_type => "ipv4_address"
+      ).nil? ? "halt" : "activate"
     end
 
     def authenticated?
@@ -81,14 +48,17 @@ class WebService < Sinatra::Base
   end
   
   put "/status" do
-    update_status(params.merge("ipv4_address" => request.ip))
+    Status.update_status(params.merge("ipv4_address" => request.ip))
 
     redirect to("/status")
   end
 
   get "/status" do
+    user_account = UserAccount.find(:uid => session[:uid])
+    
     @request_ip = request.ip
-    @domain_name = "#{@user_id}.#{@provider}.#{settings.ddns_domain}"
+    @domain_name = "#{user_account.nickname}.#{user_account.provider}.#{settings.ddns_domain}"
+    @dns_vital = get_dns_vital()
     @ipv4_address = get_ipv4_address()
     @txt = get_txt()
 
@@ -96,8 +66,7 @@ class WebService < Sinatra::Base
   end
 
   delete "/status" do
-    delete_status()
-    session[:uid] = nil
+    Status.delete_status(session[:uid])
 
     haml :status
   end
@@ -105,7 +74,12 @@ class WebService < Sinatra::Base
   get "/auth/:provider/callback" do
     omniauth_result = request.env["omniauth.auth"]
     session[:uid] = omniauth_result["uid"]
-    set_osn_identifier(omniauth_result["info"]["nickname"], omniauth_result["provider"])
+
+    UserAccount.create(
+      :uid => session[:uid],
+      :provider => omniauth_result["provider"],
+      :nickname => omniauth_result["info"]["nickname"]
+    )
 
     redirect to("/status")
   end

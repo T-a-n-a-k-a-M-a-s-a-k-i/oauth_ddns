@@ -1,6 +1,8 @@
 %div.container
   %h1
     Status
+  %h2
+    Your DNS Vital: #{@dns_vital}
   %form{:action => '/status', :method => 'post'}
     %input{:type => "hidden", :name => "_method", :value => "PUT"}
     %table.table.table-bordered.table-striped
