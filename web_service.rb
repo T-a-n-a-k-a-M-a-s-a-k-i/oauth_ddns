@@ -3,9 +3,7 @@ class WebService < Sinatra::Base
   config_file "config.yml"
 
   configure do
-    set :session_secret, settings.session_secret
     set :layout_engine => :haml
-    set :bind => "0.0.0.0"
     enable :method_override
     enable :sessions
   end
@@ -47,7 +45,7 @@ class WebService < Sinatra::Base
   end
 
   use OmniAuth::Builder do
-    provider :twitter, ENV["TWITTER_KEY"], ENV["TWITTER_SECRET"]
+    provider :twitter, settings.twitter_key, settings.twitter_secret
   end
   
   put "/status" do
