@@ -12,17 +12,19 @@ class WebService < Sinatra::Base
 
   helpers do
     def get_ipv4_address
-      ipv4_address = Status.find(
+      ipv4_status = Status.find(
         :uid => session[:uid],
         :record_type => "ipv4_address"
-      ).nil? ? "0.0.0.0" : ipv4_status.record
+      )
+      ipv4_status.nil? ? "0.0.0.0" : ipv4_status.record
     end
 
     def get_txt
-      txt = Status.find(
+      txt_status = Status.find(
         :uid => session[:uid],
         :record_type => "txt"
-      ).nil? ? "" : txt_status.record
+      )
+      txt_status.nil? ? "" : txt_status.record
     end
 
     def get_dns_vital
@@ -50,8 +52,8 @@ class WebService < Sinatra::Base
   
   put "/status" do
     Status.update_status(params.merge(
-      "uid" => session[:uid]
-      "ipv4_address" => request.ip,
+      "uid" => session[:uid],
+      "ipv4_address" => request.ip
     ))
 
     redirect to("/status")

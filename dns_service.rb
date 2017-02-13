@@ -12,8 +12,8 @@ class DNSService
 
   def self.run!
     RubyDNS::run_server(:listen => [[:udp, "0.0.0.0", 53],[:tcp, "0.0.0.0", 53]]) do
-      match(/\.#{Settings.ddns_domain}$/, IN::A) do |transaction|
-        ipv4_status = self.get_status_by_dns_query(transaction, "ipv4_address")
+      match(/\.#{Settings["ddns_domain"]}$/, IN::A) do |transaction|
+        ipv4_status = DNSService.get_status_by_dns_query(transaction, "ipv4_address")
 
         if ipv4_status
           transaction.respond!(ipv4_status.record, resource_class: IN::A, ttl: 1)
@@ -22,8 +22,8 @@ class DNSService
         end
       end
 
-      match(/\.#{Settings.ddns_domain}$/, IN::TXT) do |transaction|
-        txt_status = self.get_status_by_dns_query(transaction, "txt")
+      match(/\.#{Settings["ddns_domain"]}$/, IN::TXT) do |transaction|
+        txt_status = DNSService.get_status_by_dns_query(transaction, "txt")
 
         if txt_status
           transaction.respond!(txt_status.record, resource_class: IN::TXT, ttl: 1)
