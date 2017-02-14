@@ -3,7 +3,7 @@ class DNSService
   IN = Resolv::DNS::Resource::IN
 
   def self.get_status_by_dns_query(transaction, record_type)
-    Status.join(:user_accounts).filter(
+    Status.join(:user_accounts, :uid => :uid).filter(
       :nickname => transaction.name.split(".").at(0),
       :provider => transaction.name.split(".").at(1),
       :record_type => record_type
