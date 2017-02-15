@@ -1,0 +1,9 @@
+#Parent Domain Name in DDNS.
+#Ex. If you set "example.tk" and start this DDNS,
+#The user whoes nickname is "alice" in twitter can resolv "alice.twitter.example.tx".
+#You can use any Domain Name if you use this in LAN.
+ddns_domain: example
+
+#Twitter Aplication's Consumer Key and Consumer Secret.
+twitter_key: YOUR TWITTER KEY
+twitter_secret: YOUR TWITTER SECRET
